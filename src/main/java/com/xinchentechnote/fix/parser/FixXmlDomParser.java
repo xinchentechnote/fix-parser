@@ -1,4 +1,4 @@
-package com.xinchentechnote.fix;
+package com.xinchentechnote.fix.parser;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

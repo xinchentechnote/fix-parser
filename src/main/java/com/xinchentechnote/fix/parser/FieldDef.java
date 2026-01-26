@@ -1,5 +1,6 @@
-package com.xinchentechnote.fix;
+package com.xinchentechnote.fix.parser;
 
+import com.xinchentechnote.fix.parser.FixType;
 import lombok.Data;
 
 @Data

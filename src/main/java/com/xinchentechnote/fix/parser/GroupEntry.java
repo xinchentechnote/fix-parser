@@ -1,4 +1,4 @@
-package com.xinchentechnote.fix;
+package com.xinchentechnote.fix.parser;
 
 import lombok.Data;
 
@@ -19,16 +19,5 @@ public final class GroupEntry implements Entry {
     def.setEntries(entries);
     groupEntry.setDef(def);
     return groupEntry;
-  }
-
-  public TemplateModel buildTemplateModel(MsgType msgType, String parentName) {
-    return new TemplateModel(name, msgType, parentName);
-  }
-
-  public static class TemplateModel extends BaseTemplateModel {
-
-    public TemplateModel(String name, MsgType msgType, String parentName) {
-      super(name, msgType, parentName);
-    }
   }
 }
