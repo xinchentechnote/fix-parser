@@ -1,9 +1,9 @@
 package com.xinchentechnote.fix.parser;
 
-import org.junit.Test;
-
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 public class FixXmlDomParserTest {
 

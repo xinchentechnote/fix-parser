@@ -1,8 +1,7 @@
 package com.xinchentechnote.fix.parser;
 
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class MessageDef implements StructuredDef {
