@@ -58,5 +58,5 @@ jobs:
           -DskipTests \
           -Prelease \
           -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
-  env:
+        env:
           MAVEN_OPTS: "--add-opens=java.base/java.util=ALL-UNNAMED"
