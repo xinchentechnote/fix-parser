@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
 
     steps:
       - name: Checkout code
@@ -18,17 +17,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up JDK
+      - name: Set up JDK + Maven Central auth + GPG
         uses: actions/setup-java@v4
         with:
-          java-version: '11'
           distribution: 'temurin'
-
-      - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          java-version: '11'
+          server-id: ossrh
+          server-username: OSSRH_USERNAME
+          server-password: OSSRH_TOKEN
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: GPG_PASSPHRASE
 
       - name: Cache Maven dependencies
         uses: actions/cache@v3
@@ -37,26 +35,13 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Configure Git
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-
-      - name: Maven Settings
-        uses: s4u/maven-settings-action@v2
-        with:
-          servers: |
-            [{
-              "id": "ossrh",
-              "username": "${{ secrets.OSSRH_USERNAME }}",
-              "password": "${{ secrets.OSSRH_TOKEN }}"
-            }]
-
       - name: Deploy to Maven Central
         run: |
           mvn -B clean deploy \
-          -DskipTests \
-          -Prelease \
-          -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
+            -DskipTests \
+            -Prelease
         env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           MAVEN_OPTS: "--add-opens=java.base/java.util=ALL-UNNAMED"

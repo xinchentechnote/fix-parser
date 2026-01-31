@@ -6,7 +6,7 @@
 
     <groupId>io.github.xinchentechnote</groupId>
     <artifactId>fix-parser</artifactId>
-    <version>0.0.1</version>
+    <version>0.1.0</version>
     <name>fix-parser</name>
     <description>FIX protocol xml parser for Java</description>
     <url>https://github.com/xinchentechnote/fix-parser</url>
@@ -127,20 +127,6 @@
                             <goal>apply</goal>
                         </goals>
                         <phase>process-sources</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.0.1</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
