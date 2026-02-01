@@ -1,0 +1,159 @@
+@startuml
+!theme plain
+
+package "com.xinchentechnote.fix.parser" {
+  interface Entry {
+    + isRequired(): boolean
+    + getName(): String
+  }
+
+  interface StructuredDef {
+    + getName(): String
+    + getEntries(): List<Entry>
+  }
+
+  interface FixXmlParser {
+    + parse(xml: String): FixSchema
+    + parseFromXml(xml: String): FixSchema
+  }
+
+  class ComponentDef implements StructuredDef {
+    - String name
+    - List<Entry> entries
+    + build(name: String, entries: List<Entry>): ComponentDef
+  }
+
+  class ComponentEntry implements Entry {
+    - String name
+    - boolean required
+    - ComponentDef def
+    + build(name: String, required: boolean): ComponentEntry
+  }
+
+  class FieldDef {
+    - int number
+    - String name
+    - FixType type
+    + isUtc(): boolean
+  }
+
+  class FieldEntry implements Entry {
+    - String name
+    - boolean required
+    - FieldDef def
+    + build(name: String, required: boolean, number: int, type: FixType): FieldEntry
+  }
+
+  class GroupDef implements StructuredDef {
+    - String name
+    - int number
+    - String delimiter
+    - int delimiterNumber
+    - List<Entry> entries
+  }
+
+  class GroupEntry implements Entry {
+    - String name
+    - boolean required
+    - GroupDef def
+    + build(name: String, required: boolean, entries: List<Entry>): GroupEntry
+  }
+
+  class MessageDef implements StructuredDef {
+    - String name
+    - String msgType
+    - List<Entry> entries
+  }
+
+  class FixSchema {
+    - String version
+    - MessageDef header
+    - MessageDef trailer
+    - Map<String, FieldDef> fields
+    - Map<String, ComponentDef> components
+    - Map<String, MessageDef> messages
+    - Map<String, MessageDef> typeMessageMaps
+    + postProcess(): void
+    + getFirstField(entries: List<Entry>): FieldDef
+    + getMessage(msgType: String): MessageDef
+  }
+
+  class FixXmlDomParser implements FixXmlParser {
+    + load(path: String): FixSchema
+    + loadXml(xmlContent: String): FixSchema
+    + parseFromXml(xml: String): FixSchema
+    + parse(path: String): FixSchema
+    - parse(root: Element): FixSchema
+    - parseVersion(root: Element): String
+    - parseHeader(root: Element): MessageDef
+    - parseTrailer(root: Element): MessageDef
+    - parseMessages(root: Element): Map<String, MessageDef>
+    - parseEntries(item: Element): List<Entry>
+    - parseFieldEntry(element: Element): Entry
+    - parseComponentEntry(element: Element): Entry
+    - parseGroupEntry(element: Element): Entry
+    - getFirstChild(parent: Element, tagName: String): Element
+    - parseComponents(root: Element): Map<String, ComponentDef>
+    - parseFields(root: Element): Map<String, FieldDef>
+  }
+
+  enum FixType {
+    AMT
+    BOOLEAN
+    CHAR
+    COUNTRY
+    CURRENCY
+    DATA
+    EXCHANGE
+    FLOAT
+    INT
+    LENGTH
+    LOCALMKTDATE
+    MONTHYEAR
+    MULTIPLEVALUESTRING
+    NUMINGROUP
+    PERCENTAGE
+    PRICE
+    PRICEOFFSET
+    QTY
+    SEQNUM
+    STRING
+    UTCDATEONLY
+    UTCTIMEONLY
+    UTCTIMESTAMP
+    + UTC_TYPES: Set<String>
+    + isUtc(type: String): boolean
+  }
+
+  enum MsgType {
+    HEADER
+    TRAILER
+    BODY
+    GROUP
+    COMPONENT
+  }
+}
+
+' 关联关系
+ComponentEntry --> ComponentDef : def
+FieldEntry --> FieldDef : def
+GroupEntry --> GroupDef : def
+
+FixSchema --> MessageDef : header, trailer
+FixSchema --> FieldDef : fields
+FixSchema --> ComponentDef : components
+FixSchema --> MessageDef : messages, typeMessageMaps
+
+MessageDef --> Entry : entries
+ComponentDef --> Entry : entries
+GroupDef --> Entry : entries
+
+FieldDef --> FixType : type
+
+' 依赖关系
+FixXmlDomParser ..> FixSchema : creates
+FixXmlDomParser ..> MessageDef : creates
+FixXmlDomParser ..> FieldDef : creates
+FixXmlDomParser ..> ComponentDef : creates
+FixXmlDomParser ..> Entry : creates
+@enduml
